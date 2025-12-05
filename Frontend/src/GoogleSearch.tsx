@@ -165,9 +165,15 @@ function GoogleSearch() {
                     completeMethod={search}
                     field="formattedAddress"
                     itemTemplate={itemTemplate}
-                    onChange={(e) => setSearchQuery(e.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.value)
+                      handleClear()
+                    }
+                    }
                     onSelect={handleSelect}
-                    onClear={() => setSelected(null)}
+                    onClear={() => {
+                      handleClear();
+                    }}
                     placeholder="Type to search for places..."
                     forceSelection={false}
                   />
