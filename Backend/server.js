@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.post("/search", async (req, res) => {
     {
       headers: {
         "Content-Type": "application/json",
-        "X-Goog-Api-Key": "AIzaSyC-qf9BUy1fCE8p48TTdNAPE4rBGQ86tgQ",
+        "X-Goog-Api-Key": process.env.GOOGLE_API_KEY,
         "X-Goog-FieldMask":
           "places.displayName,places.formattedAddress,places.location,places.addressComponents",
       },
