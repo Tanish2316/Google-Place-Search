@@ -215,6 +215,18 @@ function GoogleSearch() {
 
               <div className="row mb-4">
                 <div className="col-md-4">
+                  <label className="form-label fw-semibold">Pincode</label>
+                  <input
+                    autoComplete='one-time-code'
+                    type="text"
+                    className="form-control"
+                    name='pincode'
+                    value={pincode}
+                    readOnly
+                    style={{ cursor: 'not-allowed' }}
+                  />
+                </div>
+                <div className="col-md-4">
                   <label className="form-label fw-semibold">City</label>
                   <input
                     autoComplete='one-time-code'
@@ -238,6 +250,10 @@ function GoogleSearch() {
                     style={{ cursor: 'not-allowed' }}
                   />
                 </div>
+
+              </div>
+
+              <div className="row mb-4">
                 <div className="col-md-4">
                   <label className="form-label fw-semibold">Country</label>
                   <input
@@ -246,21 +262,6 @@ function GoogleSearch() {
                     className="form-control"
                     name='country'
                     value={country}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-              </div>
-
-              <div className="row mb-4">
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Pincode</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='pincode'
-                    value={pincode}
                     readOnly
                     style={{ cursor: 'not-allowed' }}
                   />
