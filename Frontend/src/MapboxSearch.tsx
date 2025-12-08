@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { use, useEffect } from 'react'
+import { APIFetchMapboxDetails } from './api-service';
 
 interface CoordinateData {
     latitude: string;
@@ -27,14 +28,11 @@ function MapboxSearch({ coordinateData }: MapboxSearchProps) {
             if (coordinateData && coordinateData.latitude && coordinateData.longitude && coordinateData.latitude.trim() !== '' && coordinateData.longitude.trim() !== '') {
                 const { latitude, longitude } = coordinateData;
 
-                const resp = await axios.post('http://localhost:5000/get-mapbox-details', {
-                    latitude,
-                    longitude
-                });
+                const resp = await APIFetchMapboxDetails({ latitude, longitude });
 
                 const data = resp.data;
                 setAddressDetails(data);
-            }else{
+            } else {
                 setAddressDetails(null);
             }
         }
