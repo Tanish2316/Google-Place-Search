@@ -1,38 +1,28 @@
 import { AutoComplete } from 'primereact/autocomplete';
 import { useState } from 'react';
 import './GoogleSearch.css';
-import { APIFetchAddress } from './api-service';
-
-interface CoordinateData {
-  latitude: string;
-  longitude: string;
-  displayName?: string;
-  mapboxId?: string;
-  addressline1?: string;
-  addressline2?: string;
-  city: string;
-  state: string;
-  country: string;
-  pincode?: string;
-}
+import { APIFetchAddress } from '../api-service';
+import { GoogleData } from '../interfaces';
 
 interface GoogleSearchProps {
-  onCoordinateSelect: (data: CoordinateData) => void;
+  onSuggestionSelect: (data: GoogleData) => void;
 }
 
-function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
+function GoogleSearch({ onSuggestionSelect }: GoogleSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
-  const [addressline1, setAddressline1] = useState('');
-  const [addressline2, setAddressline2] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-  const [showFullObject, setShowFullObject] = useState(false);
+  const [addressData, setAddressData] = useState({
+    addressline1: '',
+    addressline2: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: '',
+    latitude: '',
+    longitude: '',
+    placeId: ''
+  });
 
   const search = (event: any) => {
     const query = event.query;
@@ -126,6 +116,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
     const location = place?.location || {};
     const lat = location.latitude?.toString() || '';
     const lng = location.longitude?.toString() || '';
+    const googlePlaceId = place?.id || '';
 
     return {
       addressline1: line1,
@@ -135,50 +126,45 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
       country: extractedCountry,
       pincode: extractedPincode,
       latitude: lat,
-      longitude: lng
+      longitude: lng,
+      placeId: googlePlaceId
     };
   };
 
   const handleSelect = (e: any) => {
-    setSearchQuery("")
+    setSearchQuery("");
     setSelected(e.value);
 
     const locationData = extractLocationData(e.value);
-    setAddressline1(locationData.addressline1);
-    setAddressline2(locationData.addressline2);
-    setCity(locationData.city);
-    setState(locationData.state);
-    setCountry(locationData.country);
-    setPincode(locationData.pincode);
-    setLatitude(locationData.latitude);
-    setLongitude(locationData.longitude);
+    setAddressData(locationData);
 
-    const coordinateData: CoordinateData = {
-      latitude: locationData.latitude,
-      longitude: locationData.longitude,
+    const googleData: GoogleData = {
+      placeId: locationData.placeId,
       city: locationData.city,
       state: locationData.state,
       country: locationData.country,
     };
-    onCoordinateSelect(coordinateData);
+    onSuggestionSelect(googleData);
   }
 
   const handleClear = () => {
-    setAddressline1('');
-    setAddressline2('');
-    setCity('');
-    setState('');
-    setCountry('');
-    setPincode('');
-    setLatitude('');
-    setLongitude('');
-    setSelected(null);
-    onCoordinateSelect({
-      latitude: '',
-      longitude: '',
+    setAddressData({
+      addressline1: '',
+      addressline2: '',
       city: '',
       state: '',
       country: '',
+      pincode: '',
+      latitude: '',
+      longitude: '',
+      placeId: ''
+    });
+    setSelected(null);
+    onSuggestionSelect({
+      city: '',
+      state: '',
+      country: '',
+      placeId: ''
     });
   }
 
@@ -186,7 +172,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
     <div className="mt-4 px-2">
       <div className="card shadow">
         <div className="card-body p-4">
-          <h1 className="text-center mb-4 text-primary fw-bold">Google Places Search</h1>
+          <h1 className="text-center mb-4 text-primary fw-bold">Google Places</h1>
 
           <div className="mb-5">
             <div className="gs-input-container">
@@ -231,7 +217,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='projectAddressLine1'
-                value={addressline1}
+                value={addressData.addressline1}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -243,7 +229,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='projectAddressLine2'
-                value={addressline2}
+                value={addressData.addressline2}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -258,7 +244,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='pincode'
-                value={pincode}
+                value={addressData.pincode}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -270,7 +256,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='city'
-                value={city}
+                value={addressData.city}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -282,7 +268,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='state'
-                value={state}
+                value={addressData.state}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -298,7 +284,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='country'
-                value={country}
+                value={addressData.country}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -310,7 +296,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='latitude'
-                value={latitude}
+                value={addressData.latitude}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -322,7 +308,7 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
                 type="text"
                 className="form-control"
                 name='longitude'
-                value={longitude}
+                value={addressData.longitude}
                 readOnly
                 style={{ cursor: 'not-allowed' }}
               />
@@ -339,33 +325,6 @@ function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
               Clear
             </button>
           </div>
-          {/* {selected && (
-                <div className="mt-4 text-center">
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={() => setShowFullObject(!showFullObject)}
-                  >
-                    {showFullObject ? 'Hide Full Object' : 'Show Full Object'}
-                  </button>
-
-                  {showFullObject && (
-                    <div className="mt-3">
-                      <div className="card bg-light">
-                        <div className="card-body">
-                          <h6 className="card-title text-primary">Selected Place Object:</h6>
-                          <pre style={{
-                            whiteSpace: "pre-wrap",
-                            fontFamily: "monospace",
-                            fontSize: "14px",
-                          }}>
-                            {JSON.stringify(selected, null, 2)}
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )} */}
         </div>
       </div>
     </div>

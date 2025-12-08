@@ -10,8 +10,8 @@ export const APIFetchAddress = async (
 
 
 export const APIFetchMapboxDetails = async (
-    reqBody: { latitude: string; longitude: string }
+    placeId: string
 ): Promise<AxiosResponse> => {
-    return await axios.post("https://google-place-search-1.onrender.com/get-mapbox-details", reqBody
+    return await axios.get(`https://google-place-search-1.onrender.com/get-google-details/${placeId}`
     );
 };

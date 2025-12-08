@@ -1,25 +1,13 @@
 import { useState } from "react";
-import GoogleSearch from "./GoogleSearch";
-import MapboxSearch from "./MapboxSearch";
-
-interface CoordinateData {
-  latitude: string;
-  longitude: string;
-  displayName?: string;
-  formattedAddress?: string;
-  addressline1?: string;
-  addressline2?: string;
-  city: string;
-  state: string;
-  country: string;
-  pincode?: string;
-}
+import GoogleSearch from "./components/GoogleSearch";
+import GoogleSearchDetails from "./components/GoogleSearchDetails";
+import { GoogleData } from "./interfaces";
 
 function App() {
-  const [coordinateData, setCoordinateData] = useState<CoordinateData | null>(null);
+  const [googleData, setGoogleData] = useState<GoogleData | null>(null);
 
-  const handleCoordinateSelect = (data: CoordinateData) => {
-    setCoordinateData(data);
+  const handleSuggestionSelect = (data: GoogleData) => {
+    setGoogleData(data);
   };
 
   return (
@@ -32,10 +20,10 @@ function App() {
       <div className="container-fluid">
         <div className="row">
           <div className="col-lg-6">
-            <GoogleSearch onCoordinateSelect={handleCoordinateSelect} />
+            <GoogleSearch onSuggestionSelect={handleSuggestionSelect} />
           </div>
           <div className="col-lg-6">
-            <MapboxSearch coordinateData={coordinateData} />
+            <GoogleSearchDetails googleData={googleData} />
           </div>
         </div>
       </div>
