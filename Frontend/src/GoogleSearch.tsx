@@ -3,7 +3,24 @@ import { useState } from 'react';
 import './GoogleSearch.css';
 import { APIFetchAddress } from './api-service';
 
-function GoogleSearch() {
+interface CoordinateData {
+  latitude: string;
+  longitude: string;
+  displayName?: string;
+  mapboxId?: string;
+  addressline1?: string;
+  addressline2?: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode?: string;
+}
+
+interface GoogleSearchProps {
+  onCoordinateSelect: (data: CoordinateData) => void;
+}
+
+function GoogleSearch({ onCoordinateSelect }: GoogleSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
@@ -135,6 +152,15 @@ function GoogleSearch() {
     setPincode(locationData.pincode);
     setLatitude(locationData.latitude);
     setLongitude(locationData.longitude);
+
+    const coordinateData: CoordinateData = {
+      latitude: locationData.latitude,
+      longitude: locationData.longitude,
+      city: locationData.city,
+      state: locationData.state,
+      country: locationData.country,
+    };
+    onCoordinateSelect(coordinateData);
   }
 
   const handleClear = () => {
@@ -147,168 +173,173 @@ function GoogleSearch() {
     setLatitude('');
     setLongitude('');
     setSelected(null);
+    onCoordinateSelect({
+      latitude: '',
+      longitude: '',
+      city: '',
+      state: '',
+      country: '',
+    });
   }
 
   return (
-    <div className="container mt-4">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card shadow">
-            <div className="card-body p-4">
-              <h1 className="text-center mb-4 text-primary fw-bold">Google Places Search</h1>
+    <div className="mt-4 px-2">
+      <div className="card shadow">
+        <div className="card-body p-4">
+          <h1 className="text-center mb-4 text-primary fw-bold">Google Places Search</h1>
 
-              <div className="mb-5">
-                <div className="gs-input-container">
-                  <AutoComplete
-                    value={searchQuery}
-                    suggestions={suggestions}
-                    completeMethod={search}
-                    field="formattedAddress"
-                    itemTemplate={itemTemplate}
-                    onChange={(e) => {
-                      setSearchQuery(e.value)
-                      handleClear()
-                    }
-                    }
-                    onSelect={handleSelect}
-                    onClear={() => {
-                      handleClear();
-                    }}
-                    placeholder="Type to search for places..."
-                    forceSelection={false}
-                  />
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="form-label fw-semibold">Selected Address Name</label>
-                <input
-                  autoComplete='one-time-code'
-                  type="text"
-                  className="form-control"
-                  name='fullAddress'
-                  value={selected ? selected.displayName?.text : ''}
-                  readOnly
-                  style={{ cursor: 'not-allowed' }}
-                />
-              </div>
+          <div className="mb-5">
+            <div className="gs-input-container">
+              <AutoComplete
+                value={searchQuery}
+                suggestions={suggestions}
+                completeMethod={search}
+                field="formattedAddress"
+                itemTemplate={itemTemplate}
+                onChange={(e) => {
+                  setSearchQuery(e.value)
+                  handleClear()
+                }
+                }
+                onSelect={handleSelect}
+                onClear={() => {
+                  handleClear();
+                }}
+                placeholder="Type to search for places..."
+                forceSelection={false}
+              />
+            </div>
+          </div>
+          <div className="mb-4">
+            <label className="form-label fw-semibold">Selected Address Name</label>
+            <input
+              autoComplete='one-time-code'
+              type="text"
+              className="form-control"
+              name='fullAddress'
+              value={selected ? selected.displayName?.text : ''}
+              readOnly
+              style={{ cursor: 'not-allowed' }}
+            />
+          </div>
 
-              <div className="row mb-4">
-                <div className='col-md-6'>
-                  <label className="form-label fw-semibold">Address Line 1</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='projectAddressLine1'
-                    value={addressline1}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className='col-md-6'>
-                  <label className="form-label fw-semibold">Address Line 2</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='projectAddressLine2'
-                    value={addressline2}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-              </div>
+          <div className="row mb-4">
+            <div className='col-md-6'>
+              <label className="form-label fw-semibold">Address Line 1</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='projectAddressLine1'
+                value={addressline1}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className='col-md-6'>
+              <label className="form-label fw-semibold">Address Line 2</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='projectAddressLine2'
+                value={addressline2}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+          </div>
 
-              <div className="row mb-4">
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Pincode</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='pincode'
-                    value={pincode}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">City</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='city'
-                    value={city}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">State</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='state'
-                    value={state}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
+          <div className="row mb-4">
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">Pincode</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='pincode'
+                value={pincode}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">City</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='city'
+                value={city}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">State</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='state'
+                value={state}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
 
-              </div>
+          </div>
 
-              <div className="row mb-4">
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Country</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='country'
-                    value={country}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Latitude</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='latitude'
-                    value={latitude}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">Longitude</label>
-                  <input
-                    autoComplete='one-time-code'
-                    type="text"
-                    className="form-control"
-                    name='longitude'
-                    value={longitude}
-                    readOnly
-                    style={{ cursor: 'not-allowed' }}
-                  />
-                </div>
-              </div>
+          <div className="row mb-4">
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">Country</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='country'
+                value={country}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">Latitude</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='latitude'
+                value={latitude}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-semibold">Longitude</label>
+              <input
+                autoComplete='one-time-code'
+                type="text"
+                className="form-control"
+                name='longitude'
+                value={longitude}
+                readOnly
+                style={{ cursor: 'not-allowed' }}
+              />
+            </div>
+          </div>
 
-              <div className="mt-3 d-flex justify-content-end">
-                <button
-                  type="button"
-                  className="btn btn-outline-danger"
-                  onClick={handleClear}
-                  aria-label="Clear address fields"
-                >
-                  Clear
-                </button>
-              </div>
-              {/* {selected && (
+          <div className="mt-3 d-flex justify-content-end">
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={handleClear}
+              aria-label="Clear address fields"
+            >
+              Clear
+            </button>
+          </div>
+          {/* {selected && (
                 <div className="mt-4 text-center">
                   <button
                     className="btn btn-outline-primary"
@@ -335,11 +366,9 @@ function GoogleSearch() {
                   )}
                 </div>
               )} */}
-            </div>
-          </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 
