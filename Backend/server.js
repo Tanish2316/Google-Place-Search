@@ -65,6 +65,30 @@ app.get("/get-google-details/:placeId", async (req, res) => {
   }
 });
 
+app.post("/get-city-state-country", async (req, res) => {
+  const { input, category } = req.body;
+  try {
+    const googleRes = await axios.post(
+      `https://places.googleapis.com/v1/places:autocomplete`,
+      {
+        input: input,
+        includedPrimaryTypes: category,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": GOOGLE_API_KEY,
+          "X-Goog-FieldMask": "*",
+        },
+      }
+    );
+    res.json(googleRes.data);
+  } catch (error) {
+    console.error("Error fetching Google Geocode data:", error);
+    res.status(500).json({ error: "Failed to fetch Google Geocode data" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

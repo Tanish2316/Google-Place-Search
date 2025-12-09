@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { APIFetchMapboxDetails } from '../api-service';
+import { useEffect, useState } from 'react';
+import { APIGoogleDetails } from '../../api-service';
 import {
-    GoogleData,
     AddressComponent,
-    Location,
     AddressDetails,
     GoogleSearchProps
-} from '../interfaces';
+} from '../../interfaces';
 
-function GoogleSearchDetails({ googleData }: GoogleSearchProps) {
+function GooglePlacesDetails({ googleData }: GoogleSearchProps) {
     const [addressDetails, setAddressDetails] = useState<AddressDetails | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -18,7 +16,7 @@ function GoogleSearchDetails({ googleData }: GoogleSearchProps) {
                 setIsLoading(true);
                 try {
                     const { placeId } = googleData;
-                    const resp = await APIFetchMapboxDetails(placeId);
+                    const resp = await APIGoogleDetails(placeId);
                     const respData = resp?.data;
 
                     const addressComponents: AddressComponent[] = respData?.addressComponents || [];
@@ -58,15 +56,15 @@ function GoogleSearchDetails({ googleData }: GoogleSearchProps) {
             }
         }
         fetchData();
-    }, [googleData?.placeId]);
+    }, [googleData, googleData?.placeId]);
 
     return (
         <div className="mt-4 px-3">
             <div className="card shadow rounded-3">
                 <div className="card-body p-4">
-                    <h4 className="text-center mb-4 text-primary fw-bold">
+                    <h3 className="text-center mb-4 text-primary fw-bold">
                         Details based on ID
-                    </h4>
+                    </h3>
 
                     {isLoading ? (
                         <div className="text-center py-4">
@@ -169,7 +167,10 @@ function GoogleSearchDetails({ googleData }: GoogleSearchProps) {
                                         href={addressDetails.websiteUri || '#'}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="btn btn-secondary w-100"
+                                        className={`btn btn-secondary w-100 ${!addressDetails.websiteUri ? 'disabled' : ''}`}
+                                        aria-disabled={!addressDetails.websiteUri}
+                                        tabIndex={addressDetails.websiteUri ? 0 : -1}
+                                        onClick={(e) => { if (!addressDetails.websiteUri) e.preventDefault(); }}
                                     >
                                         Visit Website
                                     </a>
@@ -187,4 +188,4 @@ function GoogleSearchDetails({ googleData }: GoogleSearchProps) {
     );
 }
 
-export default GoogleSearchDetails
+export default GooglePlacesDetails
