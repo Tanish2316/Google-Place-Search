@@ -119,19 +119,15 @@ function GoogleCityStateCountryDetails() {
                             </div>
 
                             <div className="row g-3 mb-3">
-                                <div className="col-md-3">
-                                    <strong>Pincode</strong>
-                                    <div className="text-muted">{selectedSuggestion.pincode || 'N/A'}</div>
-                                </div>
-                                <div className="col-md-3">
+                                <div className="col-md-4">
                                     <strong>City</strong>
                                     <div className="text-muted">{selectedSuggestion.city || 'N/A'}</div>
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-4">
                                     <strong>State</strong>
                                     <div className="text-muted">{selectedSuggestion.state || 'N/A'}</div>
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-md-4">
                                     <strong>Country</strong>
                                     <div className="text-muted">{selectedSuggestion.country || 'N/A'}</div>
                                 </div>
